@@ -152,15 +152,16 @@ def connect_home_url_in_loop():
                 Hrs_need_to_complete =  str(remaining_hrs) + " Hrs " + str(remaining_mins) + " Mins"
                 print("Hrs completed extra for today",Hrs_need_to_complete)
                 str_1 = "Hrs completed extra for today " + str(Hrs_need_to_complete)
+            final_OP = Hrs + "\n" + str_1
+            Mbox('Automated Attendance Details', final_OP, 1)
         else:
+            Mbox('Automated Attendance Details ', "Compeleted hours are not coming on portal", 1)
             print("Compeleted hours are not coming on portal")
         driver.delete_all_cookies()
         #print("driver.current_url = ",driver.current_url)
         driver.close()
         time.sleep(5)
         driver.quit()
-        final_OP = Hrs + "\n" + str_1
-        Mbox('Completed Hours & Hours need to complete', final_OP, 1)
     else:
         print("response.status_code = ",response.status_code)
 
