@@ -5,6 +5,8 @@ Created on Fri Jul 26 13:21:16 2019
 @author: KS5046082
 """
 
+#import os
+#print(os.environ.get('user_name'))
 
 import time
 from selenium import webdriver
@@ -35,8 +37,8 @@ def connect_home_url_in_loop():
     #connect_home_url_in_loop
     if response.status_code == 200:
         ### Login to Syntel portal automatically
-        user = "KS5046082"
-        pwd = "Jul2019$"
+        user_name = "KS5046082"
+        user_password = "Jul2019$"
         
         top_windows = []
         win32gui.EnumWindows(windowEnumerationHandler, top_windows)
@@ -86,9 +88,9 @@ def connect_home_url_in_loop():
         assert "my Atos Syntel - Login" in driver.title
         #print("driver.title after = ",driver.title)
         elem = driver.find_element_by_id("_com_liferay_login_web_portlet_LoginPortlet_kpoUserName")
-        elem.send_keys(user)
+        elem.send_keys(user_name)
         elem = driver.find_element_by_id("_com_liferay_login_web_portlet_LoginPortlet_kpoPassword")
-        elem.send_keys(pwd)
+        elem.send_keys(user_password)
         elem.send_keys(Keys.RETURN)
         time.sleep(15)
             
