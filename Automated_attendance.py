@@ -11,10 +11,15 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException
 
 import requests
-
+import re
+from datetime import date
+from datetime import datetime
 import win32gui, win32con
+import calendar 
+from dateutil.relativedelta import relativedelta
 
 import ctypes  # An included library with Python install.
  
@@ -50,13 +55,23 @@ def connect_home_url_in_loop():
         #driver = webdriver.Chrome("C:/Users/KS5046082/PyTutorial/chromedriver_win32/chromedriver.exe",chrome_options=chrome_options)
         #driver.maximize_window()
         #"C:/Users/KS5046082/PyTutorial/chromedriver_win32/chromedriver.exe",
-        print("Entering in loop of %s" %(url))
+        print("Entering into of %s" %(url))
         time.sleep(5)
-        print("status_code = ",response.status_code)
-        driver = webdriver.Chrome(chrome_options=chrome_options)#,
+        #print("status_code = ",response.status_code)
+        driver = webdriver.Chrome(options=chrome_options)#,
                                       #desired_capabilities=capabilities)
         driver.implicitly_wait(15) # seconds
         driver.get("https://www.myatos-syntel.net")
+        
+        today = date.today()
+        
+        print("Today's date:", today)
+        print("Today's Week Number:", today.weekday())
+        print("Today's Day is ",calendar.day_name[today.weekday()])
+        Total_Hrs_as_per_policy = int(today.weekday())*9 + 9
+        print("Total_Hrs_as_per_policy =",Total_Hrs_as_per_policy)
+        
+        WebDriverWait(driver, 15)
         #print("Current session is {}".format(driver.session_id))
         for i in top_windows:
             #print (i)
@@ -66,8 +81,10 @@ def connect_home_url_in_loop():
          
             #print("driver.current_url = ",driver.current_url)
             #print("driver.page_source = ",driver.page_source)
-            
-        assert "Login" in driver.title
+        #my Atos Syntel - Login    
+        #print("driver.title before = ",driver.title)
+        assert "my Atos Syntel - Login" in driver.title
+        #print("driver.title after = ",driver.title)
         elem = driver.find_element_by_id("_com_liferay_login_web_portlet_LoginPortlet_kpoUserName")
         elem.send_keys(user)
         elem = driver.find_element_by_id("_com_liferay_login_web_portlet_LoginPortlet_kpoPassword")
@@ -86,11 +103,21 @@ def connect_home_url_in_loop():
         actions.click(elem_leave_attendance)
         actions.perform()
         time.sleep(15)
+        
+        #"//*[@id='PlaceHolderMain_grdToday']/tbody/tr[2]/td[2]"
     
-            #//*[@id="PlaceHolderLeftNavBarTop_Menu1_mnutaasdb"]/ul/li[5]/a
+        #//*[@id="PlaceHolderLeftNavBarTop_Menu1_mnutaasdb"]/ul/li[5]/a
         driver.switch_to.frame("_com_liferay_iframe_web_portlet_IFramePortlet_INSTANCE_BGBP31ofSaoC_iframe")
         time.sleep(15)
-    
+        
+        try:
+            elem_todays_in_time = driver.find_element_by_xpath("//*[@id='PlaceHolderMain_grdToday']/tbody/tr[2]/td[2]").text
+            print("elem_todays_in_time = ",elem_todays_in_time)
+            time.sleep(10)
+        except NoSuchElementException:
+            pass
+            
+
         elem_leave_attendance_hrs = driver.find_element_by_xpath("//button[@id= 'PlaceHolderMain_myBtn']") 
         #elem_leave_attendance_hrs = driver.find_elements_by_xpath("//button[@id='PlaceHolderMain_myBtn']").click
         #print("elem_leave_attendance_hrs",elem_leave_attendance_hrs)
@@ -101,18 +128,39 @@ def connect_home_url_in_loop():
         time.sleep(10)
             
         Hrs = driver.find_element_by_xpath("//span[@id = 'PlaceHolderMain_lblhrscount']").text 
-        print("hours = ",Hrs)
+        
+        if Hrs !=  'Label':
+            print("hours = ",Hrs)
+            #print(" Type hrs=",type(Hrs))
+            text_strng, time_field = Hrs.split(':')
+            #print("time_field",time_field)
+            time_hrs,time_mins = map(int, re.findall(r'\d+', time_field))
+            Total_time_completed = str(time_hrs)+":"+str(time_mins)
+            #Total_time_obj = datetime.strptime(Total_time_completed,'%H:%M').time()
+            print("Total_time_completed =  ", Total_time_completed)
+            remaining_hrs = Total_Hrs_as_per_policy - time_hrs
+            remaining_mins = 60 - time_mins
+            #Hrs_need_to_complete = datetime_obj_per_policy - Total_time_obj
+            if remaining_hrs > 0:
+                Hrs_need_to_complete = str(remaining_hrs) + " Hrs " + str(remaining_mins) + " Mins"
+            #Hrs_need_to_complete = datetime.strptime('27:00', '%H:%M') - Total_time_obj
+                print("Hrs need to complete for today",Hrs_need_to_complete)
+                str_1 = "Hrs need to complete for today " + str(Hrs_need_to_complete)
+            else:
+                Hrs_need_to_complete =  str(remaining_hrs) + " Hrs " + str(remaining_mins) + " Mins"
+                print("Hrs completed extra for today",Hrs_need_to_complete)
+                str_1 = "Hrs completed extra for today " + str(Hrs_need_to_complete)
+        else:
+            print("Compeleted hours are not coming on portal")
         driver.delete_all_cookies()
         #print("driver.current_url = ",driver.current_url)
         driver.close()
         time.sleep(5)
         driver.quit()
-
-        Mbox('Completed Hours', Hrs, 1)
-
+        final_OP = Hrs + "\n" + str_1
+        Mbox('Completed Hours & Hours need to complete', final_OP, 1)
     else:
         print("response.status_code = ",response.status_code)
-
 
 
 if __name__ == '__main__':
