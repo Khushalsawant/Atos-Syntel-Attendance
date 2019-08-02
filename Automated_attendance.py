@@ -37,8 +37,8 @@ def connect_home_url_in_loop():
     #connect_home_url_in_loop
     if response.status_code == 200:
         ### Login to Syntel portal automatically
-        user_name = "KS5046082"
-        user_password = "Jul2019$"
+        user_name = "######"
+        user_password = "$$$$$$$$$"
         
         top_windows = []
         win32gui.EnumWindows(windowEnumerationHandler, top_windows)
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     print("executed in existing file ")
 
     url = 'https://www.myatos-syntel.net'
-    response = requests.get(url)#,verify=False)        # To execute get request 
+    response = requests.get(url,verify=False)        # To execute get request 
 
     print("status_code = ",response.status_code) 
 
@@ -180,7 +180,7 @@ else:
     print("executed using import file ")
 
     url = 'https://www.myatos-syntel.net'
-    response = requests.get(url)#,verify=True)        # To execute get request 
+    response = requests.get(url,verify=False)        # To execute get request 
 
     print("status_code = ",response.status_code) 
 
