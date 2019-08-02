@@ -57,7 +57,7 @@ def connect_home_url_in_loop():
         #driver = webdriver.Chrome("C:/Users/KS5046082/PyTutorial/chromedriver_win32/chromedriver.exe",chrome_options=chrome_options)
         #driver.maximize_window()
         #"C:/Users/KS5046082/PyTutorial/chromedriver_win32/chromedriver.exe",
-        print("Entering into of %s" %(url))
+        print("Entering into  %s" %(url))
         time.sleep(5)
         #print("status_code = ",response.status_code)
         driver = webdriver.Chrome(options=chrome_options)#,
@@ -68,8 +68,8 @@ def connect_home_url_in_loop():
         today = date.today()
         
         print("Today's date:", today)
-        print("Today's Week Number:", today.weekday())
-        print("Today's Day is ",calendar.day_name[today.weekday()])
+        #print("Today's Week Number:", today.weekday())
+        print("Today is ",calendar.day_name[today.weekday()])
         Total_Hrs_as_per_policy = int(today.weekday())*9 + 9
         print("Total_Hrs_as_per_policy =",Total_Hrs_as_per_policy)
         
@@ -140,7 +140,8 @@ def connect_home_url_in_loop():
             Total_time_completed = str(time_hrs)+":"+str(time_mins)
             #Total_time_obj = datetime.strptime(Total_time_completed,'%H:%M').time()
             print("Total_time_completed =  ", Total_time_completed)
-            remaining_hrs = Total_Hrs_as_per_policy - time_hrs
+            
+            remaining_hrs = Total_Hrs_as_per_policy - time_hrs -1
             remaining_mins = 60 - time_mins
             #Hrs_need_to_complete = datetime_obj_per_policy - Total_time_obj
             if remaining_hrs > 0:
@@ -170,7 +171,7 @@ if __name__ == '__main__':
     print("executed in existing file ")
 
     url = 'https://www.myatos-syntel.net'
-    response = requests.get(url,verify=False)        # To execute get request 
+    response = requests.get(url)#,verify=False)        # To execute get request 
 
     print("status_code = ",response.status_code) 
 
@@ -179,7 +180,7 @@ else:
     print("executed using import file ")
 
     url = 'https://www.myatos-syntel.net'
-    response = requests.get(url,verify=False)        # To execute get request 
+    response = requests.get(url)#,verify=True)        # To execute get request 
 
     print("status_code = ",response.status_code) 
 
